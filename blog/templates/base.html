@@ -21,12 +21,19 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{{ url_for('home.start_page') }}">Home</a>
         </li>
+		
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('article.render_articles')}}">Articles</a>
         </li>
+		
 		 <li class="nav-item">
            <a class="nav-link" href="{{ url_for('user.user_list') }}">Users</a>
          </li>
+		 
+		 <li class="nav-item">
+           <a class="nav-link" href="{{ url_for('auth_app.login') }}">Log in</a>
+         </li>
+
       </ul>
     </div>
   </div>

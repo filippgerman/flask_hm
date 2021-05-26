@@ -12,15 +12,15 @@
 
 <form method="post" action="{{ url_for('auth_app.login') }}">
   <div class="mb-3">
-	<label for="exampleFormControlInput1" class="form-label">Email address</label>
+	<label for="exampleFormControlInput1" class="form-label">Username</label>
 	<input type="text" class="form-control" name="username" id="username" placeholder="username">
   </div>
   <div class="mb-3">
-	<label for="exampleFormControlInput1" class="form-label">Email address</label>
-	<input type="password" class="form-controll" id="password" placeholder="password">
+	<label for="exampleFormControlInput1" class="form-label">Password</label>
+	<input type="password" class="form-control" name="password" id="password" placeholder="password">
   </div>
   <button type="submit" class="btn btn-primary">Primary</button>
-
+  <a href="{{ url_for('auth_app.registration') }}" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
 </form>
 
 {% endblock %}
