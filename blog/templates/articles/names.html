@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}
+    users
+{% endblock %}
+{% block body %}
+    {% for name in names_list %}
+      <p><a href="{{url_('users.get_articles', name.id)}}">{{ name }}</a></p>
+	{% endfor %}
+{% endblock %}
