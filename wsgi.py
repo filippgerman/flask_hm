@@ -38,5 +38,8 @@ def create_article():
     db.session.commit()
 
     print(f'статья создана: {article}')
-    
-app.run()
+
+app.run(
+    host="0.0.0.0",
+    debug=True,
+)
