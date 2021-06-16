@@ -12,4 +12,4 @@ class Articles(db.Model):
     author_id = Column(Integer, db.ForeignKey('User.id'), nullable=False)
     
     def __repr__(self):
-        return f"Article {self.title} {self.author}"
+        return f"Article {self.title}"

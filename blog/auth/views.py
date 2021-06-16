@@ -1,10 +1,12 @@
-from flask import Blueprint, request, render_template, redirect, url_for
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Blueprint, request, render_template, redirect, url_for, current_app
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from sqlalchemy.exc import IntegrityError
+
 from blog.models import User
 from blog.models.database import db
 import uuid
 import hashlib
-
+from blog.forms.user import RegistrationForm
 
 auth_app = Blueprint("auth_app", __name__, url_prefix='/auth')
 login_manager = LoginManager()
@@ -22,54 +24,53 @@ def unauthorized():
 
 @auth_app.route("/login", methods=["GET", "POST"], endpoint="login")
 def login():
-    if request.method == "GET":
-        return render_template("auth/login.html")
+    form = RegistrationForm(request.form)
+    if request.method == "POST" and form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).one_or_none()
+        if user is None:
+            form.username.errors.append("username already not exists!")
+            return render_template("auth/login.html", form=form)
 
-    username = request.form.get("username")
-    if not username:
-        return render_template("auth/login.html", error="username not passed")
-
-    user = User.query.filter_by(username=username).one_or_none()
-    if user is None:
-        return render_template("auth/login.html", error=f"no user {username!r} found")
-
-    password = request.form.get("password")
-    if not check_password(user.password, password):
-        return render_template("auth/login.html", error=f"password error")
+        password = form.password.data
+        if not check_password(user.password, password):
+            form.username.errors.append("password error")
+            return render_template("auth/login.html", form=form)
     
-    login_user(user)
-    return redirect(url_for("article.render_articles"))
+        login_user(user)
+        return redirect(url_for("article.render_articles"))
+    return render_template("auth/login.html", form=form)
 
 
-@auth_app.route("/registration", methods=["GET", "POST"], endpoint="registration")
-def registration():
-    if request.method == "GET":
-        return render_template("auth/registration.html")
+@auth_app.route("/register", methods=["GET", "POST"], endpoint="register")
+def register():
+    error = None
+    form = RegistrationForm(request.form)
+    if request.method == "POST" and form.validate_on_submit():
+        if User.query.filter_by(username=form.username.data).count():
+            form.username.errors.append("username already exists!")
+            return render_template("auth/register.html", form=form)
 
-    form_username = request.form.get("username")
-    check_user = User.query.filter_by(username=form_username).one_or_none()
-    if check_user is not None:
-        return render_template("auth/registration.html", error=f"this nickname {username!r} is busy")
-    
-    form_email = request.form.get("email")
-    check_email = User.query.filter_by(email=form_email).one_or_none()
-    if check_email is not None:
-        return render_template("auth/registration.html", error=f"this email is busy")
-    
-    form_password = request.form.get("password")
-    form_password_hash = hash_password(form_password)
+        if User.query.filter_by(email=form.email.data).count():
+            form.email.errors.append("email already exists!")
+            return render_template("auth/register.html", form=form)
 
-    user = User(username=form_username,
-                password=form_password_hash,
-                email=form_email)
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+        )
+        user.password = hash_password(form.password.data)
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            current_app.logger.exception("Could not create user!")
+            error = "Could not create user!"
+        else:
+            current_app.logger.info("Created user %s", user)
+            login_user(user)
+            return redirect(url_for("article.render_articles"))
+    return render_template("auth/register.html", form=form, error=error)
 
-    db.session.add(user)
-    db.session.commit()
-
-    user = User.query.filter_by(email=form_email).one_or_none()
-    login_user(user)
-    return redirect(url_for("article.render_articles"))
-    
 
 @auth_app.route("/logout", endpoint="logout")
 @login_required
