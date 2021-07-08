@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+tag article
+{% endblock %}
+
+{% block body %}
+{% for item in article.articles %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{item.title}}</h5>
+    <p class="card-text">{{item.text}}</p>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
