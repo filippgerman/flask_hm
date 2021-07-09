@@ -6,7 +6,7 @@ from blog.models import User
 from blog.models.database import db
 import uuid
 import hashlib
-from blog.forms.user import RegistrationForm
+from blog.forms.user import RegistrationForm, UserBaseForm
 
 auth_app = Blueprint("auth_app", __name__, url_prefix='/auth')
 login_manager = LoginManager()
@@ -24,7 +24,7 @@ def unauthorized():
 
 @auth_app.route("/login", methods=["GET", "POST"], endpoint="login")
 def login():
-    form = RegistrationForm(request.form)
+    form = UserBaseForm(request.form)
     if request.method == "POST" and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).one_or_none()
         if user is None:

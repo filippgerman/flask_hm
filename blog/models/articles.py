@@ -21,6 +21,9 @@ class Articles(db.Model):
     def __repr__(self):
         return f"Article {self.title}"
 
+    def __str__(self):
+        return self.title
+    
 
 class Tag(db.Model):
     __tablename__ = "Tag"
@@ -31,7 +34,10 @@ class Tag(db.Model):
 
     def __repr__(self):
         return f"Tag {self.name}"
-
+        
+    def __str__(self):
+         return self.name
+    
 
 class ArticleTags(db.Model):
     __tablename__ = 'ArticleTags'

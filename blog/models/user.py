@@ -10,7 +10,12 @@ class User(db.Model, UserMixin):
     username = Column(String(80), unique=True, nullable=False)
     password = Column(String(500), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
+    is_staff = Column(Boolean, default=False)
     articles = db.relationship('Articles', backref='user_articles', lazy=True)
     
     def __repr__(self):
         return f"<User #{self.id} {self.username!r}>"
+
+    def __str__(self):
+        return self.username
+    
