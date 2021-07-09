@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+users detail
+{% endblock %}
+
+{% block body %}
+  {% for article in data%}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{article.title}}</h5>
+    <p class="card-text">{{article.text}}</p>
+	<a href="{{url_for('article.get_articles', pk=article.id )}}" class="btn btn-primary">Go</a>
+  </div>
+</div>
+  {% endfor %}
+{% endblock %}
