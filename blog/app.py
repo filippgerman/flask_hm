@@ -12,9 +12,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from blog.admin.views import MyAdminIndexView
 
+from blog.api import init_api
 
 csrf = CSRFProtect()
 admin = Admin(name="Blog Admin",index_view=MyAdminIndexView(), template_mode="bootstrap4")
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -27,6 +30,7 @@ def create_app():
 
     admin.init_app(app)
     csrf.init_app(app)
+    api = init_api(app)
     
     return app
 
