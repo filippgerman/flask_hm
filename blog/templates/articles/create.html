@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+Create
+{% endblock %}
+
+{% block body %}
+
+<form method="POST">
+  {{ form.csrf_token() }}
+  <div class="mb-3">
+	<label for="exampleFormControlInput1" class="form-label">Title</label>
+	<input type="text" class="form-control" name="title" id="exampleFormControlInput1" placeholder="name">
+  </div>
+
+  <div class="mb-3">
+	<label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+	<textarea class="form-control" name="text" id="exampleFormControlTextarea1" rows="3"></textarea></div>
+
+  <input type="submit" value="Submit">
+
+  <select  multiple name="tags_article">
+	{% for item in tags %}
+	<option value="{{ item.name }}">{{ item.name }}</option>
+	{% endfor %}
+  </select>
+
+</form>
+{% endblock %}
